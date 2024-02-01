@@ -64,7 +64,7 @@ const request = (method, path) => {
             // unpacking the params, the params are the functions that will be called after the fetch is done
             // here params is coming as an array
 
-            // NEED TO AS PALLU ABOUT THE PARAMS
+            // NEED TO AS PALLU ABOUT THE PARAMS #pallavi
             return fetch(url + path, req)
                 .then((res) => res.json())
                 .then((res) => {
@@ -118,11 +118,14 @@ const util = (() => {
     };
     // the above code is to escape the html tags from the string
 
-    const salin = (btn, msg = 'Tersalin', timeout = 1500) => {
+    const salin = (btn, msg = 'Copied', timeout = 1500) => {
         navigator.clipboard.writeText(btn.getAttribute('data-nomer'));
+        // this will copy the text to the clipboard
+        // get attribute is used to get the value of the attribute of the element
 
         let tmp = btn.innerHTML;
         btn.innerHTML = msg;
+        // this will change the text of the button to the msg
         btn.disabled = true;
 
         let clear = null;
@@ -130,28 +133,35 @@ const util = (() => {
             btn.innerHTML = tmp;
             btn.disabled = false;
             btn.focus();
+            // btn.focus() is used to focus on the button after the text is copied
+            // focus here means that the button will be highlighted
+
 
             clearTimeout(clear);
             clear = null;
             return;
         }, timeout);
+        // this last function is to change the text of the button back to the original text
+        // BUT NEED  TO UNDERSTAND THE CLEAR AND TIMEOUT #pallavi
     };
 
     const timer = () => {
         let countDownDate = (new Date(document.getElementById('tampilan-waktu').getAttribute('data-waktu').replace(' ', 'T'))).getTime();
-
+        // 
         setInterval(() => {
             let distance = Math.abs(countDownDate - (new Date()).getTime());
 
-            document.getElementById('hari').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+            document.getElementById('day').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
             document.getElementById('jam').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             document.getElementById('menit').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             document.getElementById('detik').innerText = Math.floor((distance % (1000 * 60)) / 1000);
         }, 1000);
+        // this is calculated every second due to timeout function
     };
 
     const music = (btn) => {
         if (btn.getAttribute('data-status') !== 'true') {
+            // data status is used only in the music button
             btn.setAttribute('data-status', 'true');
             audio.play();
             btn.innerHTML = '<i class="fa-solid fa-circle-pause spin-button"></i>';
@@ -169,6 +179,7 @@ const util = (() => {
 
     const tamu = () => {
         let name = (new URLSearchParams(window.location.search)).get('to');
+        console.log(name,"saaaaaaaaaaaaaaaaaa");
 
         if (!name) {
             document.getElementById('nama-tamu').remove();
@@ -177,11 +188,13 @@ const util = (() => {
 
         let div = document.createElement('div');
         div.classList.add('m-2');
-        div.innerHTML = `<p class="mt-0 mb-1 mx-0 p-0 text-light">Kepada Yth Bapak/Ibu/Saudara/i</p><h2 class="text-light">${escapeHtml(name)}</h2>`;
-
+        div.innerHTML = `<p class="mt-0 mb-1 mx-0 p-0 text-light">Dear Mr/Mrs/Sister/i</p><h2 class="text-light">${escapeHtml(name)}</h2>`;
+        console.log(div,"ass")
         document.getElementById('form-nama').value = name;
         document.getElementById('nama-tamu').appendChild(div);
     };
+    // https://ulems.my.id/?to=gokul this is how you use it
+
 
     const animation = async () => {
         const duration = 10 * 1000;
@@ -197,7 +210,7 @@ const util = (() => {
             const ticks = Math.max(200, 500 * (timeLeft / duration));
 
             skew = Math.max(0.8, skew - 0.001);
-
+            // confetti is for celebration effect
             await confetti({
                 particleCount: 1,
                 startVelocity: 0,
@@ -218,6 +231,7 @@ const util = (() => {
             }
         })();
     };
+    // will learn separately about this function
 
     const buka = async (button) => {
         button.disabled = true;
@@ -240,6 +254,7 @@ const util = (() => {
         await session.check();
         await animation();
     };
+    // need to understand this function #pallavi
 
     const show = () => {
         tamu();
