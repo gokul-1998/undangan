@@ -3,23 +3,31 @@ const storage = (table) => {
     if (!localStorage.getItem(table)) {
         localStorage.setItem(table, JSON.stringify({}));
     }
-
+    // the above code is to make sure that the table exists in the localStorage
     const get = (key = null) => {
         let data = JSON.parse(localStorage.getItem(table));
         return key ? data[key] : data;
+        // this is an if statement to check if the key is null or not
+        // if the key is null then it will return the whole data 
+        // if the key is not null then it will return the data of the key
+        // you should read this as if (key == null) { return data } else { return data[key] }
+        // or if key returns true then it will return data[key] else it will return data
     };
+    // the above code is to get the data from the localStorage
 
     const set = (key, value) => {
         let storage = get();
         storage[key] = value;
         localStorage.setItem(table, JSON.stringify(storage));
     };
+    // the above code is to set the data to the localStorage
 
     const unset = (key) => {
         let storage = get();
         delete storage[key];
         localStorage.setItem(table, JSON.stringify(storage));
     };
+    // the above code is to delete the data from the localStorage
 
     const has = (key) => Object.keys(get()).includes(key);
 
@@ -27,13 +35,16 @@ const storage = (table) => {
         get,
         set,
         unset,
-        has,
+        has
     };
 };
+// basically the above code is to make a simple localStorage wrapper
+
 
 const request = (method, path) => {
 
     let url = document.querySelector('body').getAttribute('data-url');
+
     let req = {
         method: method.toUpperCase(),
         headers: {
@@ -44,10 +55,16 @@ const request = (method, path) => {
 
     if (url.slice(-1) == '/') {
         url = url.slice(0, -1);
+        // this will remove the last character of the url if it is a slash
+        
     }
 
     return {
         async then(...params) {
+            // unpacking the params, the params are the functions that will be called after the fetch is done
+            // here params is coming as an array
+
+            // NEED TO AS PALLU ABOUT THE PARAMS
             return fetch(url + path, req)
                 .then((res) => res.json())
                 .then((res) => {
@@ -89,6 +106,7 @@ const util = (() => {
             }
         }, 10);
     };
+    // the above code is to make the opacity of the element to 0, so that it will fade out
 
     const escapeHtml = (unsafe) => {
         return unsafe
@@ -98,6 +116,7 @@ const util = (() => {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     };
+    // the above code is to escape the html tags from the string
 
     const salin = (btn, msg = 'Tersalin', timeout = 1500) => {
         navigator.clipboard.writeText(btn.getAttribute('data-nomer'));
@@ -323,8 +342,8 @@ const pagination = (() => {
         let tmp = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>Loading...`;
-        await comment.ucapan();
-        document.getElementById('daftar-ucapan').scrollIntoView({ behavior: 'smooth' });
+        await comment.Saying();
+        document.getElementById('daftar-Saying').scrollIntoView({ behavior: 'smooth' });
         button.disabled = false;
         button.innerHTML = tmp;
     };
@@ -341,7 +360,7 @@ const pagination = (() => {
             resultData = 0;
             page.innerText = 1;
             next.classList.remove('disabled');
-            await comment.ucapan();
+            await comment.Saying();
             disabledPrevious();
         },
         setResultData: (len) => {
@@ -392,7 +411,7 @@ const session = (() => {
                 if (res.code == 200) {
                     localStorage.removeItem('token');
                     localStorage.setItem('token', res.data.token);
-                    comment.ucapan();
+                    comment.Saying();
                 }
             })
             .catch((err) => {
@@ -411,7 +430,7 @@ const session = (() => {
             if (jwt.exp < ((new Date()).getTime() / 1000) || !jwt.iss.includes((new URL(window.location.href)).host)) {
                 await login();
             } else {
-                await comment.ucapan();
+                await comment.Saying();
             }
         } else {
             await login();
@@ -588,7 +607,7 @@ const comment = (() => {
 
         if (isSuccess) {
             await pagination.reset();
-            document.getElementById('daftar-ucapan').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('daftar-Saying').scrollIntoView({ behavior: 'smooth' });
             resetForm();
         }
 
@@ -650,7 +669,7 @@ const comment = (() => {
                 alert(`Terdapat kesalahan: ${err}`);
             });
 
-        document.getElementById('ucapan').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('Saying').scrollIntoView({ behavior: 'smooth' });
         button.disabled = false;
         button.innerText = tmp;
     };
@@ -715,9 +734,9 @@ const comment = (() => {
         return DIV;
     };
 
-    const ucapan = async () => {
-        const UCAPAN = document.getElementById('daftar-ucapan');
-        UCAPAN.innerHTML = renderLoading(pagination.getPer());
+    const Saying = async () => {
+        const Saying = document.getElementById('daftar-Saying');
+        Saying.innerHTML = renderLoading(pagination.getPer());
 
         let token = localStorage.getItem('token') ?? '';
         if (token.length == 0) {
@@ -730,12 +749,12 @@ const comment = (() => {
             .token(token)
             .then((res) => {
                 if (res.code == 200) {
-                    UCAPAN.innerHTML = null;
-                    res.data.forEach((data) => UCAPAN.appendChild(renderCard(data)));
+                    Saying.innerHTML = null;
+                    res.data.forEach((data) => Saying.appendChild(renderCard(data)));
                     pagination.setResultData(res.data.length);
 
                     if (res.data.length == 0) {
-                        UCAPAN.innerHTML = `<div class="h6 text-center">Tidak ada data</div>`;
+                        Saying.innerHTML = `<div class="h6 text-center">Tidak ada data</div>`;
                     }
                 }
             })
@@ -820,7 +839,7 @@ const comment = (() => {
             });
 
         if (isSuccess) {
-            await ucapan();
+            await Saying();
             document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
             resetForm();
         }
@@ -879,7 +898,7 @@ const comment = (() => {
             });
 
         if (isSuccess) {
-            await ucapan();
+            await Saying();
             document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
             resetForm();
         }
@@ -967,7 +986,7 @@ const comment = (() => {
                         formKehadiran.style.display = 'block';
                     }
 
-                    document.getElementById('ucapan').scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('Saying').scrollIntoView({ behavior: 'smooth' });
                 }
             })
             .catch((err) => {
@@ -988,7 +1007,7 @@ const comment = (() => {
     };
 
     return {
-        ucapan,
+        Saying,
         renderLoading,
         balasan,
         hapus,
